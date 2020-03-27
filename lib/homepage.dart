@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
-import 'package:timezone/timezone.dart';
+
 
 class HomePage extends StatefulWidget {
+  HomePage() : super();
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -37,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     http.post(url, body: {
       "longitude": controllerLong.text = _LocationLong,
       "latitude": controllerLat.text = _LocationLat,
-      "timeinout": controllerTime.text = time_now.toString(),
+      "timeinout": controllerTime.text = DateTime.now().toString(),
     });
   }
 
@@ -49,7 +52,7 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           Container(
             margin: EdgeInsets.all(10),
-            padding: EdgeInsets.only(top: 200),
+            padding: EdgeInsets.only(top: 600),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
