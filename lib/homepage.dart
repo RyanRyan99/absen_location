@@ -43,13 +43,50 @@ class _HomePageState extends State<HomePage> {
       "timeinout": controllerTime.text = DateTime.now().toString(),
     });
   }
-
+  //Maps
+  Completer<GoogleMapController> _controller = Completer();
+  static final CameraPosition _kGooglePlex = CameraPosition(
+    target: LatLng(-6.4714692, 106.8614672),
+    zoom: 14.4746,
+  );
+  static final CameraPosition _Kbintang = CameraPosition(
+      bearing: 106.861746,
+      target: LatLng(-6.471297, 106.861746),
+      tilt: 59.440717697143555,
+      zoom: 19.151926040649414
+  );
+  List<Marker> _markers = [];
+  GoogleMapController _controllerMap;
+  @override
+  void initState() {
+    super.initState();
+    _markers.add(Marker(
+      markerId: MarkerId('myMarker'),
+      draggable: true,
+      onTap: (){
+        print('Marker Tapped');
+      },
+      position: LatLng(-6.4714692, 106.861746)
+    ));
+  }
+  //EndMaps
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _formKey,
       body: new Stack(
         children: <Widget>[
+          Container(
+            height: 600,
+            child: GoogleMap(
+              mapType: MapType.hybrid,
+              initialCameraPosition: _kGooglePlex,
+              onMapCreated: (GoogleMapController controller){
+                _controller.complete(controller);
+              },
+              markers: Set.from(_markers),
+            ),
+          ),
           Container(
             margin: EdgeInsets.all(10),
             padding: EdgeInsets.only(top: 600),
@@ -69,10 +106,11 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 RaisedButton(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),),
                   color: Colors.red,
-                  child: Text("Time", style: TextStyle(color: Colors.white),),
+                  child: Icon(Icons.gps_fixed, color: Colors.white,),
                   onPressed: (){
-                    time();
+                    _goToBintang();
                   },
                 ),
               ],
@@ -81,5 +119,9 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+  Future<void> _goToBintang() async {
+    final GoogleMapController controller = await _controller.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(_Kbintang));
   }
 }
