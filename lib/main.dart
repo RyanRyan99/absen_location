@@ -1,7 +1,10 @@
-import 'package:absenlocation/homepage.dart';
-import 'package:absenlocation/maps.dart';
-import 'package:absenlocation/maps2.dart';
+
+import 'package:absenlocation/map/bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'homepage.dart';
+import 'map/maps.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,11 +14,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-
-        primarySwatch: Colors.blue,
-      ),
-      home: HomePage(),
+//      home: BlocProvider(
+//        create: (context) => MapsBloc(),
+//        child: Maps(),
+//      ),
+    home: HomePage(),
     );
   }
 }

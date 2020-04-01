@@ -17,7 +17,17 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  flutter_redux: ^0.6.0
+  equatable:
+  flutter_bloc:
+  geocoder:
+  location:
+  great_circle_distance2: ^1.0.1+1
   google_maps_flutter:
+    git:
+      url: git://github.com/awazgyawali/plugins/
+      path: packages/google_maps_flutter
+      ref: 4a106f7a4c91b5627704e9e2717c0326a67f8b24
   geolocator:
   http:
   flutter:
