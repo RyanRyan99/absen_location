@@ -33,39 +33,24 @@ class _RangeRadiusState extends State<RangeRadius> {
         bottom: 20.0,
         left: 10.0,
         right: 10.0,
-        child: Card(
-            child: BlocBuilder(
-              bloc: _mapsBloc,
-              builder: (context, state) {
-                return Column(
-                  children: <Widget>[
-                    Text(_radius.toInt().toString() + ' Meter'),
-                    Slider(
-                      max: 50,
-                      min: 5,
-                      value: _radius,
-                      activeColor: Colors.red,
-                      inactiveColor: Colors.grey,
-                      divisions: 12,
-                      onChanged: (double value) {
-                        if (!widget.isRadiusFixed) {
-                          _mapsBloc.add(UpdateRangeValues(radius: value));
-                        }
-                      },
-                    ),
-                    FlatButton(
-                      child: Text(widget.isRadiusFixed != true
-                          ? 'Atur Radius'
-                          : 'Cencel'),
-                      onPressed: () => _mapsBloc.add(IsRadiusFixedPressed(
-                          isRadiusFixed: widget.isRadiusFixed)),
-                      color:
-                      widget.isRadiusFixed != true ? Colors.blue : Colors.red,
-                    )
-                  ],
-                );
-              },
-            )),
+        child: BlocBuilder(
+          bloc: _mapsBloc,
+          builder: (context, state) {
+            return Column(
+              children: <Widget>[
+                FlatButton(
+                  child: Text(
+                    widget.isRadiusFixed != true ? 'Check' : 'Cencel'
+                  ),
+                  onPressed: () => _mapsBloc.add(IsRadiusFixedPressed(
+                      isRadiusFixed: widget.isRadiusFixed)),
+                  color:
+                  widget.isRadiusFixed != true ? Colors.red : Colors.red,
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

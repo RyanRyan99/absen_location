@@ -1,4 +1,5 @@
 
+import 'package:absenlocation/distance.dart';
 import 'package:absenlocation/map/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,9 +17,10 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
 //      home: BlocProvider(
 //        create: (context) => MapsBloc(),
-//        child: Maps(),
+//        child: HomePage(),
 //      ),
-    home: HomePage(),
+    home: CalculateDistanceWidget(),
+
     );
   }
 }

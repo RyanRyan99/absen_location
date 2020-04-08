@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:absenlocation/map/bloc/bloc.dart';
+import 'package:absenlocation/map/range_radius.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -10,7 +11,8 @@ import 'map/bloc/maps_bloc.dart';
 
 
 class HomePage extends StatefulWidget {
-  HomePage() : super();
+  final bool isRadiusFixed;
+  HomePage({@required this.isRadiusFixed}) : super();
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -21,14 +23,22 @@ class _HomePageState extends State<HomePage> {
   String _LocationLat = "";
 
   void _getPosisiLokasi() async {
-    final posisi = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    final posisi = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
     print(posisi);
-
     setState(() {
       _LocationLong = "${posisi.longitude}";
       _LocationLat = "${posisi.latitude}";
+      _marker.add(Marker(
+          markerId: MarkerId('myMarker'),
+          draggable: true,
+          onTap: (){
+            print('Marker Tapped');
+          },
+          position: LatLng(posisi.latitude, posisi.longitude)
+      ));
     });
   }
+
   DateTime time_now =new DateTime.now();
   void time() async {
     DateTime time_now =new DateTime.now();
@@ -49,10 +59,7 @@ class _HomePageState extends State<HomePage> {
   }
   //Maps
   Completer<GoogleMapController> _controller = Completer();
-  static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(-6.4714692, 106.8614672),
-    zoom: 14.4746,
-  );
+
   static final CameraPosition _Kbintang = CameraPosition(
       bearing: 106.861746,
       target: LatLng(-6.471297, 106.861746),
@@ -67,9 +74,9 @@ class _HomePageState extends State<HomePage> {
   bool _isRadiusFixed = false;
   bool _showFixedGpsIcon = false;
   MapsBloc _mapsBloc;
-  static const LatLng _center = const LatLng(-6.471449, 106.861565);
+  static const LatLng _center = const LatLng(-6.471446, 106.86158);
   LatLng _lastMapPosition = _center;
-  MapType _currentMapType = MapType.normal;
+  MapType _currentMapType = MapType.hybrid;
 
   @override
   void initState() {
@@ -127,7 +134,7 @@ class _HomePageState extends State<HomePage> {
               listener: (BuildContext context, MapsState state){
                 if(state is LocationUserfound){
                   Scaffold.of(context)..hideCurrentSnackBar();
-                  _lastMapPosition =LatLng(state.locationModel.lat, state.locationModel.long);
+                  _lastMapPosition = LatLng(state.locationModel.lat, state.locationModel.long);
                   //
                 }
                 if (state is MarkerWithRadius) {
@@ -207,6 +214,64 @@ class _HomePageState extends State<HomePage> {
                     body: new Stack(
                       children: <Widget>[
                         _GoogleMapsWidget(state),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 600),
+                           child: Container(
+                            margin: EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                             RaisedButton(
+                               color: Colors.red,
+                               child: Text("Absen", style: TextStyle(color: Colors.white),),
+                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                               onPressed: () async {
+                                 final posisi = await Geolocator().getCurrentPosition(desiredAccuracy: LocationAccuracy.best);
+                                 print(posisi);
+                                 setState(() {
+                                   _LocationLong = "${posisi.longitude}";
+                                   _LocationLat = "${posisi.latitude}";
+                                   _marker.add(Marker(
+                                       markerId: MarkerId('myMarker'),
+                                       draggable: true,
+                                       onTap: (){
+                                         print('Marker Tapped');
+                                       },
+                                       position: LatLng(posisi.latitude, posisi.longitude)
+                                   ));
+                                 });
+                                 // ignore: unrelated_type_equality_checks
+                                 if(posisi == _center){
+                                   showDialog(
+                                       context: (context),
+                                       child: AlertDialog(
+                                         content: Text("Lokasi Akurat."),
+                                       )
+                                   );
+                                 }
+                                 else {
+//                                   insertData();
+                                   showDialog(
+                                       context: (context),
+                                       child: AlertDialog(
+                                         content: Text("Lokasi Tidak Akurat."),
+                                       )
+                                   );
+                                 }
+                               },
+                             ),
+                             RaisedButton(
+                               color: Colors.red,
+                               child: Text("Get Lokasi", style: TextStyle(color: Colors.white),),
+                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                               onPressed: (){
+                                 _getPosisiLokasi();
+                               },
+                             )
+                           ],
+                          ),
+                          ),
+                        )
                       ],
                     ),
                   );
@@ -214,72 +279,8 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-//          Container(
-//            height: 600,
-//            child: GoogleMap(
-//              onTap: (LatLng location){
-//                if(_isRadiusFixed){
-//                  _mapsBloc.add(GenerateMarkerToCompareLocation(
-//                    radiusLocation: _lastMapPosition,
-//                    mapPosition: location,
-//                    radius: _radius,
-//                  ));
-//                }
-//              },
-//              mapType: MapType.hybrid,
-//              myLocationEnabled: true,
-//              myLocationButtonEnabled: true,
-//              initialCameraPosition: _kGooglePlex,
-//              onMapCreated: (GoogleMapController controller){
-//                _controller.complete(controller);
-//              },
-//              circles: circles,
-//              markers: Set.from(_markers),
-//              onCameraIdle: (){
-//                if (_isRadiusFixed != true)
-//                  _mapsBloc.add(
-//                    GenerateMarkerWithRadius(
-//                        lastPosition: _lastMapPosition, radius: _radius),
-//                  );
-//              },
-//            ),
-//          ),
-          Container(
-            margin: EdgeInsets.all(10),
-            padding: EdgeInsets.only(top: 600),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                RaisedButton(
-                  color: Colors.red,
-                  child: Text("Absen", style: TextStyle(color: Colors.white),),
-                  onPressed: (){insertData();},
-                ),
-                RaisedButton(
-                  color: Colors.red,
-                  child: Text("Get Lokasi", style: TextStyle(color: Colors.white),),
-                  onPressed: (){
-                   _getPosisiLokasi();
-                  },
-                ),
-                RaisedButton(
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20),),
-                  color: Colors.red,
-                  child: Icon(Icons.gps_fixed, color: Colors.white,),
-                  onPressed: (){
-                    _goToBintang();
-                  },
-                ),
-              ],
-            ),
-          )
         ],
       ),
     );
-  }
-
-  Future<void> _goToBintang() async {
-    final GoogleMapController controller = await _controller.future;
-    controller.animateCamera(CameraUpdate.newCameraPosition(_Kbintang));
   }
 }

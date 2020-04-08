@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:meta/meta.dart';
 
@@ -97,3 +98,4 @@ class GenerateMarkerToCompareLocation extends MapsEvent {
   // TODO: implement props
   List<Object> get props => null;
 }
+

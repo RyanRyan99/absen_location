@@ -4,6 +4,7 @@ import 'package:absenlocation/map/model/location_model.dart';
 import 'package:absenlocation/map/model/radius_model.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoder/geocoder.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:great_circle_distance2/great_circle_distance2.dart';
 import 'package:location/location.dart';
@@ -13,7 +14,6 @@ import 'package:flutter/services.dart';
 class MapsBloc extends Bloc<MapsEvent, MapsState> {
   @override
   MapsState get initialState => InitialMapsState();
-
   @override
   Stream<MapsState> mapEventToState(
       MapsEvent event,
@@ -65,8 +65,7 @@ class MapsBloc extends Bloc<MapsEvent, MapsState> {
     }
   }
 
-  Stream<MapsState> _mapGenerateMarkerwithRadiusToMap(
-      LatLng _position, double _radius) async* {
+  Stream<MapsState> _mapGenerateMarkerwithRadiusToMap(LatLng _position, double _radius) async* {
     try {
       yield Loading();
       Marker _marker = Marker(
@@ -114,8 +113,7 @@ class MapsBloc extends Bloc<MapsEvent, MapsState> {
       yield RadiusFixedUpdate(radiusFixed: true);
   }
 
-  Stream<MapsState> _mapGenerateMarkerToCompareToMap(
-      LatLng _mapPostion, LatLng _radiusPostion, double _radius) async* {
+  Stream<MapsState> _mapGenerateMarkerToCompareToMap(LatLng _currentLocation, LatLng _radiusPostion, double _radius) async* {
     try {
       yield Loading();
       String message;
@@ -123,8 +121,8 @@ class MapsBloc extends Bloc<MapsEvent, MapsState> {
       var gcd = new GreatCircleDistance.fromDegrees(
           latitude1: _radiusPostion.latitude,
           longitude1: _radiusPostion.longitude,
-          latitude2: _mapPostion.latitude,
-          longitude2: _mapPostion.longitude);
+          latitude2: _currentLocation.latitude,
+          longitude2: _currentLocation.longitude);
       if (_radius >= gcd.haversineDistance()) {
         message =
         'Lokasi Berada Dalam Jangkauan ${gcd.haversineDistance().toInt()} Meter';
@@ -140,8 +138,8 @@ class MapsBloc extends Bloc<MapsEvent, MapsState> {
           backgroundColor: colorSnack);
 
       final _marker = Marker(
-        markerId: MarkerId(_mapPostion.toString()),
-        position: _mapPostion,
+        markerId: MarkerId(_currentLocation.toString()),
+        position: _currentLocation,
         infoWindow: InfoWindow(
           title: '${gcd.haversineDistance().toInt()} Radius Meter',
         ),
