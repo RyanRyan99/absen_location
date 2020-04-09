@@ -17,6 +17,7 @@ environment:
   sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
+  android_intent:
   dio:
   flutter_redux: ^0.6.0
   equatable:
